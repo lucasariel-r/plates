@@ -12,9 +12,10 @@ struct Columns{
     int rightAmount;    //register how many "plates" there are at the right column
 
     char evidence; // can be 'A'(for left column) or 'r'(for right column)
+    char noEvidence;
 };
 
-int decideInitialCondition(int *leftAmount, int *rightAmount, char *left, char *right, char *evidence){
+int decideInitialCondition(int *leftAmount, int *rightAmount, char *left, char *right, char *evidence, char *noEvidence){
     srand(time(NULL));
 
     // gen a random number for left. and don't let be 100 or 0
@@ -71,28 +72,46 @@ int decideInitialCondition(int *leftAmount, int *rightAmount, char *left, char *
     };
 
     // decides the evidence object (the side with less amount of plates)
-    if(*leftAmount < *rightAmount)
+    if(*leftAmount < *rightAmount){
         *evidence = 'A';
+        *noEvidence = 'B';
+    };
 
-    if(*rightAmount < *leftAmount)
+    if(*rightAmount < *leftAmount){
         *evidence = 'B';
+        *noEvidence = 'A';
+    };
+
+    return 0;
+};
+
+int formatColumns(char *right, char *left){
+    for(int i = 0; i < 200; i++){
+        right[i] = 'N';
+        left[i] = 'N';
+    };
+
+    return 0;
 };
 
 int main(){
     struct Columns columns;
+
+    formatColumns(columns.right, columns.left);
     decideInitialCondition(
         &columns.leftAmount, 
         &columns.rightAmount, 
         columns.left, 
         columns.right,
-        &columns.evidence
+        &columns.evidence,
+        &columns.noEvidence
     );
 
     printf("\n================================================");
 
     int *evidObjAmountP; // evidence object amount pointer
     char *evidObjP; // evidence object pointer
-                    //
+                    
     int *noEvidObjAmountP; // the opposite of the evidence object amount pointer
     char *noEvidObjP; // the opposite of the evidence object pointer
     
@@ -144,6 +163,96 @@ int main(){
     // say that there's nothing in evidence and how many there's in noEvidence
     *noEvidObjAmountP += *evidObjAmountP;
     *evidObjAmountP = 0;
+
+    printf("\n %c // %c\n", columns.evidence, columns.noEvidence);
+
+    int controlEvidIndice = 0;
+    int controlNoEvidIndice = 0;
+
+    int contram;
+    for(; ;){
+        int isToSend = 0; // says if is to send the left characters to the other column
+        int j = 0;
+
+        for(int i = 0; i < 200; i++){
+            if(noEvidObjP[i] == 'N')
+                break;
+
+            if(isToSend == 1){
+                evidObjP[j + controlEvidIndice] = noEvidObjP[i];
+                noEvidObjP[i] = 'N';
+
+                j++;
+            };
+
+            if(columns.evidence == noEvidObjP[i]){
+                evidObjP[controlEvidIndice] = noEvidObjP[i];
+                noEvidObjP[i] = 'N';
+
+                j++;
+                isToSend = 1;
+                controlNoEvidIndice = i;
+                printf("\nno evidence: %i", controlNoEvidIndice);
+            };
+        };
+
+        // stop the loop if the first loop block don't find the correct character
+        if(isToSend = 0)
+            break;
+
+
+        printf("\n");
+        for(int i = 0; i < 15; i++)
+            printf("%c ", evidObjP[i]);
+
+        printf("\n");
+        for(int i = 0; i < 15; i++)
+            printf("%c ", noEvidObjP[i]);
+
+
+        isToSend = 0;
+        j = 0;
+
+        for(int i = 0; i < 200; i++){
+            if(evidObjP[i] == 'N')
+                break;
+
+            if(isToSend == 1){
+                noEvidObjP[j + controlNoEvidIndice] = evidObjP[i];
+                evidObjP[i] = 'N';
+
+                j++;
+            };
+
+            if(columns.noEvidence == evidObjP[i]){
+                noEvidObjP[controlNoEvidIndice] = evidObjP[i];
+                evidObjP[i] = 'N';
+
+
+                j++;
+                isToSend = 1;
+
+                controlEvidIndice = i;
+                printf("\nevidence: %i", controlEvidIndice);
+            };
+        };
+
+        printf("\n\n");
+        for(int i = 0; i < 15; i++)
+            printf("%c ", evidObjP[i]);
+
+        printf("\n");
+        for(int i = 0; i < 15; i++)
+            printf("%c ", noEvidObjP[i]);
+
+        printf("\n");
+
+        scanf("%i", &contram);
+
+        if(contram == 50)
+            break;
+    };
+
 
     return 0;
 };
