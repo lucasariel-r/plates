@@ -87,8 +87,8 @@ int decideInitialCondition(int *leftAmount, int *rightAmount, char *left, char *
 
 int formatColumns(char *right, char *left){
     for(int i = 0; i < 200; i++){
-        right[i] = 'N';
-        left[i] = 'N';
+        right[i] = '*';
+        left[i] = '*';
     };
 
     return 0;
@@ -188,7 +188,7 @@ int main(){
     for(int i = 0; i < *evidObjAmountP; i++){
         noEvidObjP[*noEvidObjAmountP + i] = evidObjP[i];
 
-        evidObjP[i] = 'N'; // N means nonee
+        evidObjP[i] = '*'; // * means nonee
     };
 
     // say that there's nothing in evidence and how many there's in noEvidence
@@ -205,19 +205,19 @@ int main(){
 
         printColumns(evidObjP, noEvidObjP, &columns.sumAmount);
         for(int i = 0; i < 200; i++){
-            if(noEvidObjP[i] == 'N')
+            if(noEvidObjP[i] == '*')
                 break;
 
             if(isToSend == 1){
                 evidObjP[j + controlEvidIndice] = noEvidObjP[i];
-                noEvidObjP[i] = 'N';
+                noEvidObjP[i] = '*';
 
                 j++;
             };
 
             if(columns.evidence == noEvidObjP[i]){
                 evidObjP[controlEvidIndice] = noEvidObjP[i];
-                noEvidObjP[i] = 'N';
+                noEvidObjP[i] = '*';
 
                 j++;
                 isToSend = 1;
@@ -236,19 +236,19 @@ int main(){
 
         printColumns(evidObjP, noEvidObjP, &columns.sumAmount);
         for(int i = 0; i < 200; i++){
-            if(evidObjP[i] == 'N')
+            if(evidObjP[i] == '*')
                 break;
 
             if(isToSend == 1){
                 noEvidObjP[j + controlNoEvidIndice] = evidObjP[i];
-                evidObjP[i] = 'N';
+                evidObjP[i] = '*';
 
                 j++;
             };
 
             if(columns.noEvidence == evidObjP[i]){
                 noEvidObjP[controlNoEvidIndice] = evidObjP[i];
-                evidObjP[i] = 'N';
+                evidObjP[i] = '*';
 
 
                 j++;
