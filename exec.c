@@ -10,12 +10,13 @@ struct Columns{
 
     int leftAmount;     //register how many "plates" there are at the left column
     int rightAmount;    //register how many "plates" there are at the right column
+    int sumAmount;
 
     char evidence; // can be 'A'(for left column) or 'r'(for right column)
     char noEvidence;
 };
 
-int decideInitialCondition(int *leftAmount, int *rightAmount, char *left, char *right, char *evidence, char *noEvidence){
+int decideInitialCondition(int *leftAmount, int *rightAmount, char *left, char *right, char *evidence, char *noEvidence, int *sumAmount){
     srand(time(NULL));
 
     // gen a random number for left. and don't let be 100 or 0
@@ -65,10 +66,7 @@ int decideInitialCondition(int *leftAmount, int *rightAmount, char *left, char *
             char AorB = round( (double)rand() / RAND_MAX ) + 65;
 
             isLeft[i] = AorB;
-            printf("%c ", isLeft[i]);
         };
-
-        printf("\n");
     };
 
     // decides the evidence object (the side with less amount of plates)
@@ -82,6 +80,8 @@ int decideInitialCondition(int *leftAmount, int *rightAmount, char *left, char *
         *noEvidence = 'A';
     };
 
+    *sumAmount = *rightAmount + *leftAmount;
+
     return 0;
 };
 
@@ -90,6 +90,33 @@ int formatColumns(char *right, char *left){
         right[i] = 'N';
         left[i] = 'N';
     };
+
+    return 0;
+};
+
+int printColumns(char *left, char *right, int *sumAmount){
+    int j = 1;
+
+    for(int i = *sumAmount; i>=0; i--){
+        if(j >= 10){
+            printf("(%i)  %c         ", j, left[i]);
+            printf("%c\n", right[i]);
+
+            j++;
+        } else if(j >= 100){
+            printf("(%i) %c         ", j, left[i]);
+            printf("%c\n", right[i]);
+
+            j++;
+        }else{
+            printf("(%i)   %c         ", j, left[i]);
+            printf("%c\n", right[i]);
+
+            j++;
+        };
+    };
+
+    printf("\n");
 
     return 0;
 };
@@ -104,10 +131,9 @@ int main(){
         columns.left, 
         columns.right,
         &columns.evidence,
-        &columns.noEvidence
+        &columns.noEvidence,
+        &columns.sumAmount
     );
-
-    printf("\n================================================");
 
     int *evidObjAmountP; // evidence object amount pointer
     char *evidObjP; // evidence object pointer
@@ -153,6 +179,11 @@ int main(){
     */
 
 
+    char nothingNew;
+
+    printColumns(evidObjP, noEvidObjP, &columns.sumAmount);
+    scanf("%c", &nothingNew);
+
     // move everything of evidence to noEvidence
     for(int i = 0; i < *evidObjAmountP; i++){
         noEvidObjP[*noEvidObjAmountP + i] = evidObjP[i];
@@ -164,16 +195,15 @@ int main(){
     *noEvidObjAmountP += *evidObjAmountP;
     *evidObjAmountP = 0;
 
-    printf("\n %c // %c\n", columns.evidence, columns.noEvidence);
 
     int controlEvidIndice = 0;
     int controlNoEvidIndice = 0;
 
-    int contram;
     for(; ;){
         int isToSend = 0; // says if is to send the left characters to the other column
         int j = 0;
 
+        printColumns(evidObjP, noEvidObjP, &columns.sumAmount);
         for(int i = 0; i < 200; i++){
             if(noEvidObjP[i] == 'N')
                 break;
@@ -192,27 +222,19 @@ int main(){
                 j++;
                 isToSend = 1;
                 controlNoEvidIndice = i;
-                printf("\nno evidence: %i", controlNoEvidIndice);
             };
         };
 
         // stop the loop if the first loop block don't find the correct character
-        if(isToSend = 0)
+        if(isToSend == 0)
             break;
-
-
-        printf("\n");
-        for(int i = 0; i < 15; i++)
-            printf("%c ", evidObjP[i]);
-
-        printf("\n");
-        for(int i = 0; i < 15; i++)
-            printf("%c ", noEvidObjP[i]);
-
 
         isToSend = 0;
         j = 0;
 
+        scanf("%c", &nothingNew);
+
+        printColumns(evidObjP, noEvidObjP, &columns.sumAmount);
         for(int i = 0; i < 200; i++){
             if(evidObjP[i] == 'N')
                 break;
@@ -233,27 +255,16 @@ int main(){
                 isToSend = 1;
 
                 controlEvidIndice = i;
-                printf("\nevidence: %i", controlEvidIndice);
             };
         };
-
-        printf("\n\n");
-        for(int i = 0; i < 15; i++)
-            printf("%c ", evidObjP[i]);
-
-        printf("\n");
-        for(int i = 0; i < 15; i++)
-            printf("%c ", noEvidObjP[i]);
-
-        printf("\n");
-
-        scanf("%i", &contram);
-
-        if(contram == 50)
-            break;
     };
 
+    // final output
+    printColumns(evidObjP, noEvidObjP, &columns.sumAmount);
+
+    printf("\n\nfinished");
 
     return 0;
 };
 
+/*printf("\n %c // %c\n", columns.evidence, columns.noEvidence);*/
