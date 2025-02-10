@@ -20,16 +20,14 @@ int decideInitialCondition(int *leftAmount, int *rightAmount, char *left, char *
     srand(time(NULL));
 
     // gen a random number for left. and don't let be 100 or 0
-    /**leftAmount = ((double)rand() / RAND_MAX) * 100;*/
-    *leftAmount = 6; // TMP
+    *leftAmount = ((double)rand() / RAND_MAX) * 100;
     if(*leftAmount == 0)
         *leftAmount = 1;
     else if(*leftAmount == 100)
         *leftAmount = 99;
 
     // gen a random number for right. and don't let be 100 or 0
-    /**rightAmount = ((double)rand() / RAND_MAX) * 100;*/
-    *rightAmount = 8; // TMP
+    *rightAmount = ((double)rand() / RAND_MAX) * 100;
     if(*rightAmount == 0)
         *rightAmount = 1;
     else if(*rightAmount == 100)
